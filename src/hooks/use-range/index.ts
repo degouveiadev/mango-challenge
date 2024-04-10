@@ -1,0 +1,105 @@
+import {useRef, useState, useCallback, useEffect} from 'react'
+
+export type OnChangeRange = {
+  min: number;
+  max: number;
+}
+
+export type UseRangeProps = {
+  min: number;
+  max: number;
+  onChange: (values: OnChangeRange) => void;
+}
+
+export const useRange = ({ min, max, onChange }: UseRangeProps) => {
+  const sliderRef = useRef<HTMLDivElement>(null);
+  const controlRef = useRef<HTMLDivElement | null>(null);
+
+  const [minValue, setMinValue] = useState<number>(min)
+  const [maxValue, setMaxValue] = useState<number>(max)
+
+  const [isDragging, setIsDragging] = useState(false);
+
+  const moveSliderPosition = useCallback((event: MouseEvent | TouchEvent | React.MouseEvent) => {
+    const sliderBoundingClientRect = sliderRef.current?.getBoundingClientRect();
+  
+    if (sliderBoundingClientRect) {
+      const clientX = (event as MouseEvent).clientX;
+      const posX = clientX - sliderBoundingClientRect.left;
+      const totalWidth = sliderBoundingClientRect.width;
+
+      const isLeftControl = controlRef.current?.getAttribute('data-control') === 'left'
+
+      let selectedValue = (posX / totalWidth) * (max - min) + min;
+      selectedValue = Math.max(min, selectedValue);
+      selectedValue = Math.min(max, selectedValue);
+
+      if (isLeftControl && selectedValue < maxValue) {
+        setMinValue(selectedValue)
+        return
+      }
+
+      if (!isLeftControl && selectedValue > minValue) setMaxValue(selectedValue)
+    }
+  }, [max, min, minValue, maxValue]);
+
+  const onMouseUp = useCallback(() => {
+    onChange({ min: minValue, max: maxValue });
+    setIsDragging(false);
+  }, [minValue, maxValue, onChange]);
+  
+  const onMouseMove = useCallback((event: Event) => {
+    if (isDragging) {
+      moveSliderPosition(event as unknown as MouseEvent);
+    }
+  }, [isDragging, moveSliderPosition]);
+  
+  const onMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
+    controlRef.current = event.target as HTMLDivElement;
+    moveSliderPosition(event);
+    setIsDragging(true);
+  };
+
+  const handleRangeValues = (externalValue: number, isMinValue = false) => {
+    let value = externalValue
+    value = Math.max(min, value);
+    value = Math.min(max, value);
+
+    if (isMinValue && value < maxValue) {
+      setMinValue(value)
+      onChange({ min: value, max: maxValue });
+      return
+    }
+
+    if (!isMinValue && value > minValue) {
+      console.log('max', value)
+      setMaxValue(value)
+      onChange({ min: minValue, max: value });
+    }
+  }
+
+  useEffect(() => {
+    if (isDragging) {
+      window.addEventListener("mousemove", onMouseMove);
+      window.addEventListener("mouseup", onMouseUp);
+    }
+    return () => {
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("mouseup", onMouseUp);
+    };
+  }, [isDragging, onMouseMove, onMouseUp]);
+
+  const calcControlPosition = (value: number): number => {
+    return ((value - min) / (max - min)) * 100
+  }
+
+  return {
+    sliderRef,
+    controlRef,
+    minValue,
+    maxValue,
+    calcControlPosition,
+    onMouseDown,
+    handleRangeValues
+  }
+}
