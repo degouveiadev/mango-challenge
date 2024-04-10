@@ -7,7 +7,6 @@ type InputProps = {
   onChange: (value: number) => void;
   placeholder?: string;
   disabled?: boolean;
-  readonly?: boolean;
   value: number;
   defaultValue: string | number;
   currency: string;
@@ -19,6 +18,7 @@ export const InputCurrency: React.FC<InputProps> = ({
   currency,
   value,
   defaultValue,
+  disabled,
   onChange,
 }) => {
   const { 
@@ -28,7 +28,7 @@ export const InputCurrency: React.FC<InputProps> = ({
     handleBlur,
     handleChange,
     handleShowInput
-  } = useInputCurrency({ value, min, max, onChange })
+  } = useInputCurrency({ value, min, max, disabled, onChange })
 
   return (
     <FormControl showInput={showInput}>
@@ -42,6 +42,8 @@ export const InputCurrency: React.FC<InputProps> = ({
         value={inputValue}
         step="0.01"
         role='spinbutton'
+        disabled={disabled}
+        readOnly={disabled}
       />
       {
         showInput

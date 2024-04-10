@@ -1,4 +1,4 @@
-import {useRef, useState, useCallback, useEffect} from 'react'
+import { useRef, useState, useCallback, useEffect } from 'react'
 
 export type OnChangeRange = {
   min: number;
@@ -8,10 +8,11 @@ export type OnChangeRange = {
 export type UseRangeProps = {
   min: number;
   max: number;
+  rangeValues?: number[];
   onChange: (values: OnChangeRange) => void;
 }
 
-export const useRange = ({ min, max, onChange }: UseRangeProps) => {
+export const useRange = ({ min, max, rangeValues, onChange }: UseRangeProps) => {
   const sliderRef = useRef<HTMLDivElement>(null);
   const controlRef = useRef<HTMLDivElement | null>(null);
 
@@ -19,6 +20,15 @@ export const useRange = ({ min, max, onChange }: UseRangeProps) => {
   const [maxValue, setMaxValue] = useState<number>(max)
 
   const [isDragging, setIsDragging] = useState(false);
+
+  const getValue = useCallback((value: number) => {
+    if (rangeValues?.length) { return rangeValues[value] }
+    return value
+  }, [rangeValues])
+
+  const handleChange = useCallback(({ min, max }: OnChangeRange) => {
+    onChange({ min: getValue(min), max: getValue(max) });
+  }, [onChange, getValue])
 
   const moveSliderPosition = useCallback((event: MouseEvent | TouchEvent | React.MouseEvent) => {
     const sliderBoundingClientRect = sliderRef.current?.getBoundingClientRect();
@@ -33,6 +43,7 @@ export const useRange = ({ min, max, onChange }: UseRangeProps) => {
       let selectedValue = (posX / totalWidth) * (max - min) + min;
       selectedValue = Math.max(min, selectedValue);
       selectedValue = Math.min(max, selectedValue);
+      selectedValue = rangeValues?.length ? Math.round(selectedValue) : selectedValue
 
       if (isLeftControl && selectedValue < maxValue) {
         setMinValue(selectedValue)
@@ -41,12 +52,12 @@ export const useRange = ({ min, max, onChange }: UseRangeProps) => {
 
       if (!isLeftControl && selectedValue > minValue) setMaxValue(selectedValue)
     }
-  }, [max, min, minValue, maxValue]);
+  }, [max, min, minValue, maxValue, rangeValues]);
 
   const onMouseUp = useCallback(() => {
-    onChange({ min: minValue, max: maxValue });
+    handleChange({ min: minValue, max: maxValue });
     setIsDragging(false);
-  }, [minValue, maxValue, onChange]);
+  }, [minValue, maxValue, handleChange]);
   
   const onMouseMove = useCallback((event: Event) => {
     if (isDragging) {
@@ -67,14 +78,13 @@ export const useRange = ({ min, max, onChange }: UseRangeProps) => {
 
     if (isMinValue && value < maxValue) {
       setMinValue(value)
-      onChange({ min: value, max: maxValue });
+      handleChange({ min: value, max: maxValue });
       return
     }
 
     if (!isMinValue && value > minValue) {
-      console.log('max', value)
       setMaxValue(value)
-      onChange({ min: minValue, max: value });
+      handleChange({ min: minValue, max: value });
     }
   }
 
@@ -100,6 +110,7 @@ export const useRange = ({ min, max, onChange }: UseRangeProps) => {
     maxValue,
     calcControlPosition,
     onMouseDown,
-    handleRangeValues
+    handleRangeValues,
+    getValue,
   }
 }

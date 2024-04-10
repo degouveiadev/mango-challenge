@@ -63,7 +63,7 @@ describe('<RangeSlider />', () => {
     expect(onChange.mock.lastCall[0].max).not.toBe(80);
   });
 
-  it('should move the slider control and not call the onChange event', () => {
+  it('should call the onChange event with the initial values of range input', () => {
     const onChange = jest.fn();
     render(<RangeSlider min={1} max={80} onChange={onChange} />);
 
@@ -126,5 +126,61 @@ describe('<RangeSlider />', () => {
     fireEvent.blur(inputMaxValue);
 
     expect(onChange.mock.lastCall[0].max).toBe(80);
+  });
+
+  it('should call onChange event with the first and last element of the range values', () => {
+    const onChange = jest.fn();
+    const rangeValues = [1, 2, 3, 4, 5, 6, 7, 9.99]
+    const lastItem = rangeValues.length -1
+    render(<RangeSlider min={0} max={lastItem} rangeValues={rangeValues} onChange={onChange} />);
+
+    const slider = screen.getByRole('slider');
+    slider.getBoundingClientRect = mockGetBoundingClientRect
+
+    const controlLeft = slider.querySelector('[data-control="left"]') as HTMLElement;
+    const controlRight = slider.querySelector('[data-control="right"]') as HTMLElement;
+
+    expect(controlLeft).toBeInTheDocument();
+    expect(controlRight).toBeInTheDocument();
+
+    fireEvent.mouseDown(controlLeft)
+    fireEvent.mouseMove(controlLeft, { clientX:  90 });
+    fireEvent.mouseUp(controlLeft);
+
+    expect(onChange.mock.lastCall[0].min).toBe(3);
+
+    fireEvent.mouseDown(controlRight)
+    fireEvent.mouseMove(controlRight, { clientX: 200 });
+    fireEvent.mouseUp(controlRight);
+
+    expect(onChange.mock.lastCall[0].max).toBe(5);
+  });
+
+  it('should call the onChange event with min and max range value', () => {
+    const onChange = jest.fn();
+    const rangeValues = [1, 2, 3, 4, 5, 6, 7, 9.99]
+    const lastItem = rangeValues.length -1
+    render(<RangeSlider min={0} max={lastItem} rangeValues={rangeValues} onChange={onChange} />);
+
+    const slider = screen.getByRole('slider');
+    slider.getBoundingClientRect = mockGetBoundingClientRect
+
+    const controlLeft = slider.querySelector('[data-control="left"]') as HTMLElement;
+    const controlRight = slider.querySelector('[data-control="right"]') as HTMLElement;
+
+    expect(controlLeft).toBeInTheDocument();
+    expect(controlRight).toBeInTheDocument();
+
+    fireEvent.mouseDown(controlLeft)
+    fireEvent.mouseMove(controlLeft, { clientX:  -100 });
+    fireEvent.mouseUp(controlLeft);
+
+    expect(onChange.mock.lastCall[0].min).toBe(1);
+
+    fireEvent.mouseDown(controlRight)
+    fireEvent.mouseMove(controlRight, { clientX: 1000 });
+    fireEvent.mouseUp(controlRight);
+
+    expect(onChange.mock.lastCall[0].max).toBe(9.99);
   });
 });

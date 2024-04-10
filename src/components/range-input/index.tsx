@@ -6,6 +6,7 @@ type RangeSliderProps = {
   min: number;
   max: number;
   onChange: (values: OnChangeRange) => void;
+  rangeValues?: number[]
 }
 
 const DEFAULT_CURRECY = '€'
@@ -14,6 +15,7 @@ export const RangeSlider: React.FC<RangeSliderProps> = ({
   min,
   max,
   onChange,
+  rangeValues = []
 }) => {
   const {
     sliderRef,
@@ -21,18 +23,21 @@ export const RangeSlider: React.FC<RangeSliderProps> = ({
     maxValue,
     onMouseDown,
     calcControlPosition,
-    handleRangeValues
-  } = useRange({ min, max, onChange })
+    handleRangeValues,
+    getValue
+  } = useRange({ min, max, rangeValues, onChange })
+  const isRangeValues = rangeValues.length > 0
 
   return (
     <Container>
       <InputCurrency
         min={min}
         max={max}
-        value={minValue}
+        value={getValue(minValue)}
         defaultValue={min}
         onChange={(value) => handleRangeValues(value, true)}
         currency={DEFAULT_CURRECY}
+        disabled={isRangeValues}
       />
       <Range
         ref={sliderRef}
@@ -50,11 +55,12 @@ export const RangeSlider: React.FC<RangeSliderProps> = ({
       <InputCurrency
         min={min}
         max={max}
-        value={maxValue}
+        value={getValue(maxValue)}
         defaultValue={max}
         onChange={(value) => handleRangeValues(value, false)}
         currency={DEFAULT_CURRECY}
         aria-label="range-control"
+        disabled={isRangeValues}
       />
     </Container>
   )
