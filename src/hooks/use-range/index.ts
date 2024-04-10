@@ -1,13 +1,16 @@
 import { useRef, useState, useCallback, useEffect } from 'react'
 
-export type OnChangeRange = {
+type MinMax = {
   min: number;
   max: number;
 }
 
-export type UseRangeProps = {
-  min: number;
-  max: number;
+export type OnChangeRange = {
+  min: string;
+  max: string;
+}
+
+export type UseRangeProps = MinMax & {
   rangeValues?: number[];
   onChange: (values: OnChangeRange) => void;
 }
@@ -26,11 +29,14 @@ export const useRange = ({ min, max, rangeValues, onChange }: UseRangeProps) => 
     return value
   }, [rangeValues])
 
-  const handleChange = useCallback(({ min, max }: OnChangeRange) => {
-    onChange({ min: getValue(min), max: getValue(max) });
+  const handleChange = useCallback(({ min, max }: MinMax) => {
+    const newMin = getValue(min)?.toFixed(2)
+    const newMax = getValue(max)?.toFixed(2)
+  
+    onChange({ min: newMin, max: newMax });
   }, [onChange, getValue])
 
-  const moveSliderPosition = useCallback((event: MouseEvent | TouchEvent | React.MouseEvent) => {
+  const moveSliderPosition = useCallback((event: MouseEvent | React.MouseEvent) => {
     const sliderBoundingClientRect = sliderRef.current?.getBoundingClientRect();
   
     if (sliderBoundingClientRect) {

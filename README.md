@@ -28,8 +28,8 @@ To install the project locally just run the following commands in your console:
 ## Clone and install dependencies
 
 ```sh
-$ git clone git@github.com:juanchordg/skydropx-challenge.git # To clone the repository
-$ cd skydropx-challenge # To access the project directory
+$ git clone https://github.com/degouveiadev/mango-challenge.git # To clone the repository
+$ cd mango-challenge # To access the project directory
 $ yarn install # To install the project dependencies
 ```
 
