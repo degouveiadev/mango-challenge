@@ -24,7 +24,8 @@ export const Control = styled.div<ControlProps>`
   height: ${ControlSize}px;
   width: ${ControlSize}px;
   border-radius: 50%;
-  background-color: red;
+  box-shadow: 0px 0px 4px 0px rgba(0,0,0,0.75);
+  background-color: #039be5;
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
