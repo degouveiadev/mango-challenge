@@ -80,13 +80,13 @@ describe('<RangeSlider />', () => {
     fireEvent.mouseMove(controlLeft, { clientX: -100 });
     fireEvent.mouseUp(controlLeft);
 
-    expect(onChange.mock.lastCall[0].min).toBe(1);
+    expect(onChange.mock.lastCall[0].min).toBe("1.00");
 
     fireEvent.mouseDown(controlRight)
     fireEvent.mouseMove(controlRight, { clientX: 1000 });
     fireEvent.mouseUp(controlRight);
 
-    expect(onChange.mock.lastCall[0].max).toBe(80);
+    expect(onChange.mock.lastCall[0].max).toBe("80.00");
   });
 
   it('should change the input currency and call the onChange event', async () => {
@@ -111,7 +111,7 @@ describe('<RangeSlider />', () => {
     })
     fireEvent.blur(inputMinValue);
 
-    expect(onChange.mock.lastCall[0].min).toBe(3);
+    expect(onChange.mock.lastCall[0].min).toBe("3.00");
 
     userEvent.click(minAmountLabel)
 
@@ -125,7 +125,7 @@ describe('<RangeSlider />', () => {
     })
     fireEvent.blur(inputMaxValue);
 
-    expect(onChange.mock.lastCall[0].max).toBe(80);
+    expect(onChange.mock.lastCall[0].max).toBe("80.00");
   });
 
   it('should call onChange event with the first and last element of the range values', () => {
@@ -147,13 +147,13 @@ describe('<RangeSlider />', () => {
     fireEvent.mouseMove(controlLeft, { clientX:  90 });
     fireEvent.mouseUp(controlLeft);
 
-    expect(onChange.mock.lastCall[0].min).toBe(3);
+    expect(onChange.mock.lastCall[0].min).toBe("3.00");
 
     fireEvent.mouseDown(controlRight)
     fireEvent.mouseMove(controlRight, { clientX: 200 });
     fireEvent.mouseUp(controlRight);
 
-    expect(onChange.mock.lastCall[0].max).toBe(5);
+    expect(onChange.mock.lastCall[0].max).toBe("5.00");
   });
 
   it('should call the onChange event with min and max range value', () => {
@@ -175,12 +175,12 @@ describe('<RangeSlider />', () => {
     fireEvent.mouseMove(controlLeft, { clientX:  -100 });
     fireEvent.mouseUp(controlLeft);
 
-    expect(onChange.mock.lastCall[0].min).toBe(1);
+    expect(onChange.mock.lastCall[0].min).toBe("1.00");
 
     fireEvent.mouseDown(controlRight)
     fireEvent.mouseMove(controlRight, { clientX: 1000 });
     fireEvent.mouseUp(controlRight);
 
-    expect(onChange.mock.lastCall[0].max).toBe(9.99);
+    expect(onChange.mock.lastCall[0].max).toBe("9.99");
   });
 });
