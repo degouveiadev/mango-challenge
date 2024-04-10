@@ -4,12 +4,13 @@ export type UseInputCurrency = {
   value: number;
   min: number;
   max: number;
+  disabled?: boolean;
   onChange: (value: number) => void;
 } 
 
 const CURRENCY_REGEX = /^[0-9]+(\.[0-9]+)?$/;
 
-export const useInputCurrency = ({ value, min, max, onChange }: UseInputCurrency) => {
+export const useInputCurrency = ({ value, min, max, disabled = false, onChange }: UseInputCurrency) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [showInput, setShowInput] = useState<boolean>(false);
   const [inputValue, setInputValue] = useState<string | number>('');
@@ -27,6 +28,7 @@ export const useInputCurrency = ({ value, min, max, onChange }: UseInputCurrency
   }, [showInput])
 
   const handleShowInput = () => {
+    if (disabled) return
     setShowInput(!showInput)
   }
 

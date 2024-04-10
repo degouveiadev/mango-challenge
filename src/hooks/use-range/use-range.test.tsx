@@ -51,4 +51,13 @@ describe('useRange', () => {
 
     expect(onChange).toHaveBeenCalledTimes(1)
   });
+
+  it('should return the first and the last range value array ', () => {
+    const rangeValues = [1, 2, 3, 4, 5, 6, 7, 9.99]
+    const lastItem = rangeValues.length -1
+    const { result } = renderHook(() => useRange({ min: 0, max: lastItem, rangeValues, onChange: () => {} }));
+    
+    expect(result.current.getValue(0)).toBe(1)
+    expect(result.current.getValue(lastItem)).toBe(9.99)
+  });
 });
