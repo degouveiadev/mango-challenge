@@ -30,7 +30,7 @@ export const useRange = ({ min, max, rangeValues, onChange }: UseRangeProps) => 
     onChange({ min: getValue(min), max: getValue(max) });
   }, [onChange, getValue])
 
-  const moveSliderPosition = useCallback((event: MouseEvent | TouchEvent | React.MouseEvent) => {
+  const moveSliderPosition = useCallback((event: MouseEvent | React.MouseEvent) => {
     const sliderBoundingClientRect = sliderRef.current?.getBoundingClientRect();
   
     if (sliderBoundingClientRect) {
